@@ -1,6 +1,6 @@
 import numpy
 import torch
-from spdg import Ngram
+from spdg.ngram import Ngram
 
 
 class Net(torch.nn.Module):
