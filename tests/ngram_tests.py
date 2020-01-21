@@ -14,8 +14,12 @@ class NgramTestSuite(unittest.TestCase):
         ngram[(1, 1, 0)] = 5
         ngram.norm()
 
-        assert ngram[(0, 1, 0)] == 0.3
-        assert ngram.subgram((0, 1))[0] == 0.6
+        self.assertEqual(ngram[(0, 1, 0)], 0.3)
+        self.assertEqual(ngram.subgram((0, 1))[(0,)], 0.6)
+
+        # non - unigram subgrams
+        self.assertEqual(ngram.subgram((1,))[(1, 0)], 1)
+        self.assertEqual(ngram.subgram((0,))[(1, 0)], 0.6)
 
     def test_ngram_from_data(self):
         data = numpy.array([[1, 1, 1, 1], [1, 1, 1, 2], [1, 1, 2, 2]])

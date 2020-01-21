@@ -9,7 +9,6 @@ class Ngram(defaultdict):
     """Class implementation of n-gram probabilities in form of dictionary"""
 
     def __init__(self, n):
-        """Create empty n-gram"""
         super(Ngram, self).__init__(int)
 
         if not isinstance(n, int) or n < 1:
@@ -37,10 +36,6 @@ class Ngram(defaultdict):
                 return idx
         return None
 
-    def parameters(self):
-        for idx in self:
-            yield self[idx]
-
     def __str__(self):
         obj = ''
         for idx in self:
@@ -48,6 +43,7 @@ class Ngram(defaultdict):
         return obj.rstrip()
 
     def size(self):
+        """Returns number of entries in n-gram (equivalent to `len(ngram)`)."""
         return len(self)
 
     def subgram(self, v, cache=True):
@@ -55,20 +51,16 @@ class Ngram(defaultdict):
 
         Parameters:
 
-        - v (tuple of ints): prefix of length n-1 of some ngram entries (eg. '(1, 2)' for 3-gram)
+        - v (tuple of ints): prefix of some ngram entries (eg. '(1, 2)' or '(0,)' for 3-gram)
         - cache (bool, optional): if set to `true`, then returns cached last result.
 
         Returns:
         - ngram: possible continuations of given prefix in form of unigram.
         """
-
-        if len(v) != self.n - 1:
-            raise NotImplementedError("""ngram.subgram does not handle indices resulting with k-grams for k > 1""")
-
         if cache and v in self.subgrams.keys():
             return self.subgrams[v]
 
-        self.subgrams[v] = Ngram(1)
+        self.subgrams[v] = Ngram(self.n - len(v))
 
         for idx in self:
             ok = True
@@ -76,7 +68,7 @@ class Ngram(defaultdict):
                 if v[i] != idx[i]:
                     ok = False
             if ok:
-                self.subgrams[v][idx[len(v)]] = self[idx]
+                self.subgrams[v][idx[len(v):]] = self[idx]
 
         return self.subgrams[v].norm()
 
@@ -89,7 +81,7 @@ def from_data(data, n):
     - data: num_samples x sample_length numpy array of ints
     - n: as in n-gram
 
-    Returns: resulting n-gram distribution.
+    Returns: n-gram
     """
     ngram = Ngram(n)
 
@@ -107,7 +99,7 @@ def from_data_loader(data_loader, n):
     - data_loader: pytorch data loader of labeled sequences
     - n: as in n-gram
 
-    Returns: n-gram distribution
+    Returns: n-gram
     """
     ngram = Ngram(n)
 
