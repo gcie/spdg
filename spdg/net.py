@@ -1,6 +1,7 @@
+from collections import defaultdict
+
 import numpy
 import torch
-from spdg.ngram import Ngram
 
 
 class Net(torch.nn.Module):
@@ -29,7 +30,7 @@ class Net(torch.nn.Module):
         else:
             self.primal = architecture.to(self.device)
 
-        self.dual = Ngram(self.ngram.n)
+        self.dual = defaultdict(int)
 
         for idx in self.ngram:
             self.dual[idx] = torch.tensor(0.).uniform_(-1, 0).to(self.device).requires_grad_()
@@ -72,7 +73,7 @@ class Net(torch.nn.Module):
 
     def loss_dual(self, output):
         """Eval dual loss on given output"""
-        loss = self.loss_primal(output,)
+        loss = self.loss_primal(output)
         for i in self.ngram:
             loss += torch.log(-self.dual[i]) * self.ngram[i]
         return -loss
