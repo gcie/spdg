@@ -66,16 +66,26 @@ class Net(torch.nn.Module):
     def loss_primal(self, output):
         """Eval primal loss on given output"""
         loss = torch.tensor(0, dtype=torch.float32).to(self.device)
+
         for i in self.ngram:
             loss += torch.sum(output[:, numpy.arange(self.n), i].prod(dim=1) * self.dual[i] * self.ngram[i])
             # use torch.nn.functional.conv1d ?
+
         return loss / output.shape[0]
 
-    def loss_dual(self, output):
+    def loss_dual(self, output=None, primal_loss=None):
         """Eval dual loss on given output"""
-        loss = self.loss_primal(output)
+        if primal_loss is None and output is None:
+            raise ValueError("primal_loss and output cannot both be None")
+
+        if primal_loss is not None:
+            loss = primal_loss
+        else:
+            loss = self.loss_primal(output)
+
         for i in self.ngram:
             loss += torch.log(-self.dual[i]) * self.ngram[i]
+
         return -loss
 
     def init_weights(self):
