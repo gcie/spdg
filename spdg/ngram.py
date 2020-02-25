@@ -2,8 +2,6 @@ from collections import defaultdict
 
 import numpy
 
-from .errors import ParameterError
-
 
 class Ngram(defaultdict):
     """Class implementation of n-gram probabilities in form of dictionary"""
@@ -12,7 +10,7 @@ class Ngram(defaultdict):
         super(Ngram, self).__init__(int)
 
         if not isinstance(n, int) or n < 1:
-            raise ParameterError(f"n must be positive integer, but got {n}")
+            raise ValueError(f"n must be a positive integer, but got {n}")
 
         self.n = n
         self.subgrams = dict()
@@ -79,7 +77,7 @@ def from_data(data, n):
     Parameters:
 
     - data: num_samples x sample_length numpy array of ints
-    - n: as in n-gram
+    - n (integer): as in n-gram
 
     Returns: n-gram
     """
@@ -122,13 +120,13 @@ def random(n, entries, k=10, min_var=0):
     Returns: n-gram
     """
     if not isinstance(k, int) or k < 1:
-        raise ParameterError(f"'k' must be positive integer, but got {k}")
+        raise ValueError(f"'k' must be positive integer, but got {k}")
 
     if not isinstance(entries, int) or entries < 0:
-        raise ParameterError(f"'entries' must be non negative integer, but got {entries}")
+        raise ValueError(f"'entries' must be non negative integer, but got {entries}")
 
     if entries > k ** n:
-        raise ParameterError(f"Cannot create n-gram with given constraints. Maximum number of entries in {n}-gram with {k} \
+        raise ValueError(f"Cannot create n-gram with given constraints. Maximum number of entries in {n}-gram with {k} \
                 available symbols is {k ** n}, but got requested {entries}.")
 
     ngram = Ngram(n)
