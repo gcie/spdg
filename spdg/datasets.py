@@ -83,7 +83,7 @@ def extract_ngram(data, n, data_loader=False):
 
     else:
 
-        for sentence in data.astype('int64'):
+        for sentence in data:
             for i in range(len(sentence) - n + 1):
                 ngram[tuple(sentence[i:i+n])] += 1
 
@@ -104,6 +104,7 @@ class MNISTSequencesDataset(torch.utils.data.Dataset):
     (cyclically if necessary). If 'shuffle', then they are shuffled beforehand.
     - transform: torchvision transform applied to every MNIST image. Default: `Compose([ToTensor(), Normalize((0.1307,), (0.3081,))])`
     """
+
     def __init__(self, n, targets, train=True, root='./', image_sampling_policy='shuffle', transform=None):
 
         if image_sampling_policy != 'shuffle' and image_sampling_policy != 'replacement' and image_sampling_policy != 'as-is':
@@ -188,6 +189,7 @@ class MNISTSequencesLoader(torch.utils.data.DataLoader):
     multiprocessing_context: parameters from
     [torch.utils.data.DataLoader](https://pytorch.org/docs/stable/_modules/torch/utils/data/dataloader.html)
     """
+
     def __init__(self, n, targets, batch_size=1, shuffle=False, train=True, root='./', image_sampling_policy='shuffle', transform=None,
                  sampler=None, batch_sampler=None, num_workers=0, collate_fn=None, pin_memory=False, drop_last=False, timeout=0,
                  worker_init_fn=None, multiprocessing_context=None):
