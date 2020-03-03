@@ -34,10 +34,10 @@ class Ngram(defaultdict):
                 return idx
         return None
 
-    def __str__(self):
+    def __str__(self, format_keys=True):
         obj = ''
-        for idx in self:
-            obj = '{}{}: {:.2f}%\n'.format(obj, idx, 100. * self[idx])
+        for idx, value in sorted(self.items(), key=lambda x: -x[1]):
+            obj = '{}{}: {:.2f}%\n'.format(obj, ''.join(idx) if format_keys else idx, 100. * value)
         return obj.rstrip()
 
     def size(self):
